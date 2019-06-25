@@ -1,0 +1,23 @@
+# Set ipv4 forwarding on in /proc and in the sysctl file and reload if necessary
+- sysctl:
+    name: net.ipv4.ip_forward
+    value: 1
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+# Set ipv6 forwarding on in /proc and in the sysctl file and reload if necessary
+- sysctl:
+    name: net.ipv6.conf.all.forwarding
+    value: 1
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+# Set ICMP Errors for ipv4 on in /proc and in the sysctl file and reload if necessary
+- sysctl:
+    name: net.ipv4.icmp_errors_use_inbound_ifaddr
+    value: 1
+    sysctl_set: yes
+    state: present
+    reload: yes
