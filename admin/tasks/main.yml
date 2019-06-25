@@ -1,0 +1,24 @@
+---
+
+- name: Install ssh keys
+  authorized_key:
+    user: root
+    state: "{{ 'present' if item.name in admin_authorized else 'absent' }}"
+    key: "{{ item.key }}"
+  with_items: "{{ admin_pubkeys }}"
+
+- name: sysctl - Reboot on kernel panic
+  sysctl:
+    name: kernel.panic
+    value: 10
+    state: present
+    reload: yes
+  when: reboot_on_kernelpanic == true and ansible_virtualization_type != "lxc"
+
+- stat: path=/etc/default/grub
+  register: grubprober
+- name: Disable os-prober in grub
+  lineinfile:
+    path: /etc/default/grub
+    line: 'GRUB_DISABLE_OS_PROBER="true"'
+  when: grubprober.stat.exists == true and ansible_virtualization_type != "lxc"
