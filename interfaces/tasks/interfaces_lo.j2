@@ -1,6 +1,0 @@
-- name: Use template to create interface lo config file
-  template:
-    src: "interface_lo.j2"
-    dest: "/etc/network/interfaces.d/lo.cfg"
-  with_items: network_interface_lo
-  when: network_interface_lo is defined
