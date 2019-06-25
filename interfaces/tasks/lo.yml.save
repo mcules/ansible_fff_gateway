@@ -1,0 +1,9 @@
+# Set lo configuration
+- interfaces_file:
+    dest: /etc/network/interfaces.d/lo.cfg
+    iface: lo
+    option: mtu
+    value: 8000
+    backup: yes
+    state: present
+  register: lo_cfg

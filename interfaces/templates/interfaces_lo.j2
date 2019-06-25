@@ -1,0 +1,16 @@
+{% raw %}
+iface lo inet static
+	address {{ item.ipv4 }}/{{ item.ipv4_subnet }}
+
+	up ip -4 rule add to 10.0.0.0/8 prio 500 lookup fff
+	down ip -4 rule del to 10.0.0.0/8 prio 500 lookup fff
+
+	up ip -4 rule add to 172.20.0.0/14 prio 500 lookup fff
+	down ip -4 rule del to 172.20.0.0/14 prio 500 lookup fff
+
+iface lo inet6 static
+	address {{ item.ipv6 }}/{{ item.ipv6_subnet }}
+
+	up ip -6 rule add to fc00::/7 prio 500 lookup fff
+	down ip -6 rule del to fc00::/7 prio 500 lookup fff
+{% endraw %}

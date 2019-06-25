@@ -1,0 +1,6 @@
+---
+
+- name: Create routing table
+  lineinfile:
+    path: /etc/iproute2/rt_tables
+    line: '10    fff'

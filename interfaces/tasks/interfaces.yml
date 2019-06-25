@@ -1,0 +1,6 @@
+- name: Use Jinja2 template to create interface config file
+  template:
+    src: "interfaces.j2"
+    dest: "/etc/network/interfaces.d/{{ item.device }}.cfg"
+  with_items: network_interfaces
+  when: network_interfaces is defined
