@@ -1,0 +1,36 @@
+---
+- name: Install bird
+  apt:
+    name: bird
+
+- name: Create directories for extra config snippets
+  file:
+    dest: "/etc/bird/{{ item }}"
+    state: directory
+  with_items:
+  - bird.conf.d
+  - bird6.conf.d
+
+- name: Open firewall for BGP
+  template:
+    src: firewall.sh
+    dest: "{{ firewall_path }}/30-bird"
+  when: firewall_enabled
+  notify: reload firewall
+
+- name: Use Jinja2 template to create BGP ipv6 peering config file
+  template:
+    src: "peering_v6.j2"
+    dest: "/etc/bird/bird6.conf.d/{{ item.ix }}_as{{ item.peer.as }}.conf"
+  with_items: "{{ bird_peerings_v6 }}"
+  when: bird_peerings_v6 is defined
+  notify: reload bird6
+
+- name: Start bird
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  with_items:
+  #- bird
+  - bird6
