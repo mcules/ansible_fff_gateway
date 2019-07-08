@@ -9,8 +9,7 @@ Add following to you server config file:
     - vars/all_hosts.yml
   vars:
     - bird:
-      - name: Bird BGP Router
-        router_id: "Your_IP_Address"
+      - router_id: "Your_IP_Address"
         routes:
         - "1234:1234:1234::/44"
     - bird_peerings_v6:
