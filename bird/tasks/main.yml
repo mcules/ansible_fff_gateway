@@ -24,7 +24,7 @@
     dest: "/etc/bird/bird6.conf.d/{{ item.ix }}_as{{ item.peer.as }}.conf"
   with_items: "{{ bird_peerings_v6 }}"
   when: bird_peerings_v6 is defined
-  notify: reload bird6
+  notify: reload bird
 
 - name: Start bird
   service:
