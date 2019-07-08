@@ -12,18 +12,15 @@ Add following to you server config file:
       - router_id: "Your_IP_Address"
         routes:
         - "1234:1234:1234::/44"
-    - bird_peerings_v6:
+    - bird_peerings:
       - name: Name_for_your_peering
-        own:
-          as: Your_AS_Number
-          ipv6: "Your_Peering_IPv6"
+        own: { as: Your_AS_Number,  ipv6: "Your_Peering_IPv6", ipv4: "Your_Peering_IPv4" }
         peer:
           as: Peer_AS_Number
           ipv6: "Peer_IPv6"
+          ipv4: "Peer_IPv4"
         filters: # Optional
-          - name: test
-            result: accept
-            action: reject
+          - { name: is_valid_network, result: accept, action: reject }
     - bird_function_v6: # Optional
       - name: test
         content: "return net ~ [
