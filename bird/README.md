@@ -17,6 +17,10 @@ Add following to you server config file:
         peer:
           as: Peer_AS_Number
           ipv6: "Peer_IPv6"
+        filters:
+          - name: test
+            result: accept
+            action: reject
     - bird_function_v6:
       - name: test
         content: "return net ~ [
