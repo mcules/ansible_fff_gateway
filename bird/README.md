@@ -8,6 +8,11 @@ Add following to you server config file:
   vars_files:
     - vars/all_hosts.yml
   vars:
+    - bird:
+      - name: Bird BGP Router
+        router_id: "Your_IP_Address"
+        routes:
+        - "1234:1234:1234::/44"
     - bird_peerings_v6:
       - name: Name_for_your_peering
         own:
@@ -20,17 +25,10 @@ Add following to you server config file:
           - name: test
             result: accept
             action: reject
-          - name: test2
-            result: accept
-            action: reject
     - bird_function_v6: # Optional
       - name: test
         content: "return net ~ [
                 1234:1234:1234::/44
         ];"
-      - name: test2
-        content: "return net ~ [
-                4321:4321:4321::/44
-        };"
     - firewall_enabled: false
 ```
