@@ -10,7 +10,6 @@ Add following to you server config file:
   vars:
     - bird_peerings_v6:
       - name: Name_for_your_peering
-        ix: Internet_Exchange # Just used for File and peer name
         own:
           as: Your_AS_Number
           ipv6: "Your_Peering_IPv6"
