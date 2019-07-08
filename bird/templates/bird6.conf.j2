@@ -1,0 +1,19 @@
+router id {{ item.router_id }};
+
+protocol device {
+    scan time 15;
+}
+
+protocol kernel {
+    kernel table 20;
+    export all; # Actually insert routes into the kernel routing table
+}
+
+protocol static {
+    {% for route in (item.routes) %}
+        route {{ route }} reject;
+    {% endfor %}
+}
+
+### include extra config files ###
+include "/etc/bird/bird6.conf.d/*.conf";

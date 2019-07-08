@@ -1,4 +1,4 @@
-protocol bgp {{ item.ix }}_as{{ item.peer.as }} {
+protocol bgp {{ item.name }} {
   local as {{ item.own.as }};
   source address {{ item.own.ipv6 }};
   neighbor {{ item.peer.ipv6 }} as {{ item.peer.as }};
