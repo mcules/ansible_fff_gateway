@@ -21,10 +21,17 @@ Add following to you server config file:
           - name: test
             result: accept
             action: reject
+          - name: test2
+            result: accept
+            action: reject
     - bird_function_v6:
       - name: test
         content: "return net ~ [
                 1234:1234:1234::/44
         ];"
+      - name: test2
+        content: "return net ~ [
+                4321:4321:4321::/44
+        };"
     - firewall_enabled: false
 ```
