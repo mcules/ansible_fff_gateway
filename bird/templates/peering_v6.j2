@@ -1,12 +1,16 @@
 protocol bgp {{ item.ix }}_as{{ item.peer.as }} {
-        local as {{ item.own.as }};
-        source address {{ item.own.ipv6 }};
-        neighbor {{ item.peer.ipv6 }} as {{ item.peer.as }};
-        import all;
-        export filter {
-                if is_valid_network() then {
-                        accept;
-                }
-                reject;
-        };
+  local as {{ item.own.as }};
+  source address {{ item.own.ipv6 }};
+  neighbor {{ item.peer.ipv6 }} as {{ item.peer.as }};
+  import all;
+  {% if item.filters is defined %}
+  export filter {
+    {% for filter in (item.filters) %}
+    if {{ filter.name }}() then {
+      {{ filter.result }} ;
+    }
+    {{ filter.action }} ;
+    {% endfor %}
+  };
+  {% endif %}
 }
