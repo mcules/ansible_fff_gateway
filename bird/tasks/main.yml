@@ -21,10 +21,18 @@
 - name: Use Jinja2 template to create BGP ipv6 peering config file
   template:
     src: "peering_v6.j2"
-    dest: "/etc/bird/bird6.conf.d/{{ item.ix }}_as{{ item.peer.as }}.conf"
+    dest: "/etc/bird/bird6.conf.d/peer_{{ item.ix }}_as{{ item.peer.as }}.conf"
   with_items: "{{ bird_peerings_v6 }}"
   when: bird_peerings_v6 is defined
   notify: reload bird
+
+- name: Use Jinja2 template to create functions
+  template:
+    src: "function.j2"
+    dest: "/etc/bird/bird6.conf.d/function_{{ item.name }}.conf"
+  with_items: "{{ bird_function_v6 }}"
+  when: bird_function_v6 is defined
+#  notify: reload bird
 
 - name: Start bird
   service:
