@@ -3,14 +3,7 @@ protocol bgp {{ item.name }} {
   source address {{ item.own.ipv6 }};
   neighbor {{ item.peer.ipv6 }} as {{ item.peer.as }};
   import all;
-  {% if item.filters is defined %}
-  export filter {
-    {% for filter in (item.filters) %}
-    if {{ filter.name }}() then {
-      {{ filter.result }} ;
-    }
-    {{ filter.action }} ;
-    {% endfor %}
-  };
+  {% if item.filter is defined %}
+  export filter {{ item.filter }};
   {% endif %}
 }

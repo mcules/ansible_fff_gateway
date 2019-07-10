@@ -1,4 +1,4 @@
-router id {{ item.router_id }};
+router id {{ bird.router_id }};
 
 protocol device {
     scan time 15;
@@ -10,7 +10,7 @@ protocol kernel {
 }
 
 protocol static {
-    {% for route in (item.routes) %}
+    {% for route in (bird.routes) %}
         route {{ route }} reject;
     {% endfor %}
 }
