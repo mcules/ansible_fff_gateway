@@ -32,7 +32,7 @@
     dest: "/etc/bird/bird6.conf.d/30_peer_{{ item.name }}.conf"
   with_items: "{{ bird.peerings }}"
   when: bird.peerings is defined
-#  notify: reload bird
+  notify: reload bird
 
 - name: Create functions
   template:
@@ -40,7 +40,7 @@
     dest: "/etc/bird/bird6.conf.d/10_function_{{ item.name }}.conf"
   with_items: "{{ bird.function_v6 }}"
   when: bird.function_v6 is defined
-  notify: reload bird
+  notify: restart bird
 
 - name: Create filters
   template:
@@ -48,7 +48,7 @@
     dest: "/etc/bird/bird6.conf.d/20_filter_{{ item.name }}.conf"
   with_items: "{{ bird.filter_v6 }}"
   when: bird.filter_v6 is defined
-  notify: reload bird
+  notify: restart bird
 
 - name: Start bird
   service:
