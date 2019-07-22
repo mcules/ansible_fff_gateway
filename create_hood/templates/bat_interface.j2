@@ -1,0 +1,31 @@
+iface bat-{{ item.hoodname }} inet static
+    address {{ item.ipv4.ip }}/{{ item.ipv4.net }}
+
+    post-up ip rule add iif $IFACE table fff
+    post-down ip rule del iif $IFACE table fff
+    post-up invoke-rc.d dnsmasq restart
+    post-up ip route replace {{ item.ipv4.sub }}/{{ item.ipv4.net }} dev $IFACE proto static table fff
+    post-down ip route del {{ item.ipv4.sub }}/{{ item.ipv4.net }} dev $IFACE proto static table fff
+    post-up batctl -m $IFACE gw_mode server 64000/64000
+
+iface bat-{{ item.hoodname }} inet6 static
+    address GW-IPV6/{{ item.ipv6.fff.net }}
+
+    post-up ip -6 addr add fe80::1/64 dev $IFACE nodad
+    post-up ip -6 addr add {{ item.ipv6.int.ip }}/64 dev $IFACE
+    post-up ip -6 rule add iif $IFACE table fff
+    post-down ip -6 rule del iif $IFACE table fff
+    post-up ip -6 route add {{ item.ipv6.fff.sub }}/{{ item.ipv6.fff.net }} dev $IFACE proto static table fff
+    post-down ip -6 route del {{ item.ipv6.fff.sub }}/{{ item.ipv6.fff.net }} dev $IFACE proto static table fff
+
+{% if item.ipv6.pub.ip is defined %}
+    post-up ip -6 addr add {{ item.ipv6.pub.ip }}/{{ item.ipv6.pub.net }} dev $IFACE
+    post-up ip -6 route add {{ item.ipv6.pub.sub }}/{{ item.ipv6.pub.net }} dev $IFACE proto static table fff
+    post-down ip -6 route del {{ item.ipv6.pub.sub }}/{{ item.ipv6.pub.net }} dev $IFACE proto static table fff
+    post-up ip -6 rule add from {{ item.ipv6.pub.sub }}/{{ item.ipv6.pub.net }} lookup fff prio 50
+    post-down ip -6 rule del from {{ item.ipv6.pub.sub }}/{{ item.ipv6.pub.net }} lookup fff
+{% endif %}
+
+    post-up invoke-rc.d radvd restart
+    post-up ip6tables -t nat -A PREROUTING -i $IFACE -p tcp -d fe80::1 --dport 2342 -j REDIRECT --to-port {{ item.apache2.port }}
+    post-up ip6tables -t nat -A PREROUTING -i $IFACE -p tcp -d fe80::fff:1 --dport 2342 -j REDIRECT --to-port {{ item.apache2.port }}

@@ -1,0 +1,153 @@
+---
+
+### Alfred ###
+- name: Create Alfred Service
+  template:
+    src: "alfred_service.j2"
+    dest: "/etc/systemd/system/alfred-fff-{{ item.hoodname }}.service"
+  with_items: "{{ hood_data }}"
+  when: hood_data is defined
+#  notify: restart alfred
+
+### dnsmasq ###
+- name: Create dnsmasq Service
+  template:
+    src: "dnsmasq_service.j2"
+    dest: "/etc/systemd/system/dnsmasq-fff-{{ item.hoodname }}.service"
+  with_items: "{{ hood_data }}"
+  when: hood_data is defined
+#  notify: restart dnsmasq
+
+### fastd ###
+- name: Create fastd Service
+  template:
+    src: "fastd_service.j2"
+    dest: "/etc/systemd/system/fastd-fff-{{ item.hoodname }}.service"
+  with_items: "{{ hood_data }}"
+  when: hood_data is defined
+
+- name: Create directories for extra config snippets
+  file:
+    dest: "/etc/fastd/fff-{{ item.hoodname }}"
+    state: directory
+  with_items: "{{ hood_data }}"
+
+- name: Copy fastd up.sh to config directory
+  copy:
+    src: "files/etc/fastd/up.sh"
+    dest: "/etc/fastd/fff-{{ item.hoodname }}/"
+    owner: "root"
+    mode: 0755
+  with_items: "{{ hood_data }}"
+  when: hood_data is defined
+
+- name: Copy fastd down.sh to config directory
+  copy:
+    src: "files/etc/fastd/down.sh"
+    dest: "/etc/fastd/fff-{{ item.hoodname }}/"
+    owner: "root"
+    mode: 0755
+  with_items: "{{ hood_data }}"
+  when: hood_data is defined
+
+- name: Copy fastd verify.sh to config directory
+  copy:
+    src: "files/etc/fastd/verify.sh"
+    dest: "/etc/fastd/fff-{{ item.hoodname }}/"
+    owner: "root"
+    mode: 0755
+  with_items: "{{ hood_data }}"
+  when: hood_data is defined
+
+- name: Create fastd config
+  template:
+    src: "fastd_conf.j2"
+    dest: "/etc/fastd/fff-{{ item.hoodname }}/fastd.conf"
+  with_items: "{{ hood_data }}"
+  when: hood_data is defined
+#  notify: restart fastd
+
+### Apache2 ###
+- name: Create apache vHost
+  template:
+    src: "apache_vhost.j2"
+    dest: "/etc/apache2/sites-enabled/gw-{{ item.hoodname }}.conf"
+  with_items: "{{ hood_data }}"
+  when: hood_data is defined
+
+- name: Add Ports to apache2 ports.conf
+  lineinfile:
+    path: /etc/apache2/ports.conf
+    line: 'Listen {{ item.apache2.port }}'
+  with_items: "{{ hood_data }}"
+  when: hood_data is defined
+
+- name: Create directories for apache www
+  file:
+    dest: "/var/www/gw-{{ item.hoodname }}"
+    state: directory
+  with_items: "{{ hood_data }}"
+# notify: reload apache2
+
+- name: Create www gateway file
+  template:
+    src: "www_gateway.j2"
+    dest: "/var/www/gw-{{ item.hoodname }}/gateway"
+  with_items: "{{ hood_data }}"
+  when: hood_data is defined
+
+### Batman ###
+- name: Create bat interface
+  template:
+    src: "bat_interface.j2"
+    dest: "/etc/network/interfaces.d/bat-{{ item.hoodname }}.conf"
+  with_items: "{{ hood_data }}"
+  when: hood_data is defined
+
+### radvd ###
+- name: Create radvd.tmp directorie
+  file:
+    dest: "/etc/radvd.tmp"
+    state: directory
+
+- name: Create radvd temp files
+  template:
+    src: "radvd_conf.j2"
+    dest: "/etc/radvd.tmp/fff-{{ item.hoodname }}.conf"
+  with_items: "{{ hood_data }}"
+  when: hood_data is defined
+
+- name: "Append radvd.conf with content of temporary files"
+  shell: cat fff-* >> /etc/radvd.conf2
+  args:
+    chdir: "/etc/radvd.tmp/"
+
+- name: "Delete temporary files"
+  file:
+    path: /etc/radvd.tmp/
+    state: absent
+
+### babeld ###
+- name: Add redistribute local ips to babeld.conf
+  lineinfile:
+    path: /etc/babeld.conf
+    insertafter: '# redistribute rules'
+    line: 'redistribute local ip {{ item.ipv6.pub.sub }}/{{ item.ipv6.pub.net }}'
+  with_items: "{{ hood_data }}"
+  when: item.ipv6.pub.sub is defined
+
+- name: Add redistribute ips to babeld.conf
+  lineinfile:
+    path: /etc/babeld.conf
+    insertafter: 'redistribute local deny'
+    line: 'redistribute ip {{ item.ipv6.pub.sub }}/{{ item.ipv6.pub.net }}'
+  with_items: "{{ hood_data }}"
+  when: item.ipv6.pub.sub is defined
+
+### cronjobs ###
+- name: Keyexchange Cronjob
+  cron:
+    name: "Get keyxchangev2data for Hood {{ item.hoodname }}"
+    minute: "*/5"
+    job: 'wget "{{ item.keyserver }}" -O /var/www/gw-{{ item.hoodname }}/keyxchangev2data 2>&1'
+  with_items: "{{ hood_data }}"

@@ -1,0 +1,9 @@
+[Unit]
+Description=fastd
+
+[Service]
+ExecStart=/usr/bin/fastd -c /etc/fastd/fff-{{ item.hoodname }}/fastd.conf
+Type=simple
+
+[Install]
+WantedBy=multi-user.target

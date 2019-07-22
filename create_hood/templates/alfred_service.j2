@@ -1,0 +1,13 @@
+[Unit]
+Description=Alfred Master
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/sbin/alfred -m -i bat-{{ item.hoodname }} -b bat-{{ item.hoodname }} -u /var/run/alfred-{{ item.hoodname }}.sock
+WorkingDirectory=/tmp
+RestartSec=10
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

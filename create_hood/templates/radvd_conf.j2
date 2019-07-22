@@ -1,0 +1,32 @@
+interface bat-{{ item.hoodname }} {
+        AdvSendAdvert on;
+        MinRtrAdvInterval 60;
+        MaxRtrAdvInterval 300;
+        AdvDefaultLifetime 600;
+        AdvRASrcAddress {
+                {{ item.ipv6.int.ip }};
+        };
+
+	{% if item.ipv6.fff.sub is defined %}
+        prefix {{ item.ipv6.fff.sub }}/{{ item.ipv6.fff.net }} {
+                AdvOnLink on;
+                AdvAutonomous on;
+        };
+	{%endif %}
+
+	{% if item.ipv6.pub.sub is defined %}
+        # START- Nur wenn public IPv6 genutzt wird
+        prefix {{ item.ipv6.pub.sub }}/{{ item.ipv6.pub.net }} {
+                AdvOnLink on;
+                AdvAutonomous on;
+        };
+        # END - Nur wenn public IPv6 genutzt wird
+	{% endif %}
+
+        route fc00::/7 {
+        };
+        RDNSS fd43:5602:29bd:ffff::42 {
+        };
+        RDNSS fd43:5602:29bd:ffff:a:a:a:a {
+        };
+};

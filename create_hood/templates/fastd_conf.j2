@@ -1,0 +1,29 @@
+# Log errors to stderr
+log level error;
+
+# Log warnings to a log file
+log to syslog as "fff-{{ item.hoodname }}" level warn;
+
+# Set the interface name
+interface "fff-{{ item.hoodname }}";
+
+# Disable encryption
+method "null";
+
+# Bind to a fixed port, IPv4 only
+bind any:{{ item.fastd.port }};
+
+# fastd need a key but we don't use them: generate by "fastd --generate-key"
+secret: {{ item.fastd.secret }}
+#Public: {{ item.fastd.public }}
+
+# Set the interface MTU for TAP mode with xsalsa20/aes128 over IPv4 with a base MTU of 1492 (PPPoE)
+# (see MTU selection documentation)
+mtu 1426;
+
+on up "/etc/fastd/fff-{{ item.hoodname }}/up.sh";
+on down "/etc/fastd/fff-{{ item.hoodname }}/down.sh";
+
+secure handshakes no;
+
+on verify "/etc/fastd/fff-{{ item.hoodname }}/verify.sh";
