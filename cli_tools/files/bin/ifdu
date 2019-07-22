@@ -1,0 +1,15 @@
+#!/bin/bash
+
+ip link set "$1" down #> /dev/null 2>&1
+a=$?
+ip link set "$1" up #> /dev/null 2>&1
+b=$?
+
+if [ $a -eq 0 ] && [ $b -eq 0 ]
+then
+ echo 'interface restarted'
+else
+ echo 'interface restarting failed'
+fi
+
+exit 0

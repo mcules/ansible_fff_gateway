@@ -23,3 +23,7 @@ echo
 echo IPv4:
 echo
 d | grep "prefix 0.0.0.0/0" | fmt_route
+echo
+echo xroute:
+echo
+d | grep "xroute" | fmt_route

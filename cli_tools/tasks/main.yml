@@ -81,6 +81,16 @@
     path: /root/.bashrc
     line: 'alias mv="mv -i"'
 
+- name: Set ipa alias
+  lineinfile:
+    path: /root/.bashrc
+    line: 'alias ipa="ip -c a"'
+
+- name: Enable bash completion
+  lineinfile:
+    path: /root/.bashrc
+    line: 'if [ -f /etc/bash_completion ]; then . /etc/bash_completion; fi'
+
 - name: Install bin files
   copy:
     src: "{{ item }}"
