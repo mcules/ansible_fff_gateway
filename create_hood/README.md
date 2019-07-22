@@ -19,7 +19,7 @@ Add following to you server config file:
             ip: "fd43:5602:28bd:xxxx::1"
             net: 64
             sub: "fd43:5602:28bd:xxxx::"
-          pub:
+          pub: ### OPTIONAL
             ip: "2a0c:b642:1030:xxxx::1"
             net: 64
             sub: "2a0c:b642:1030:xxxx::"
