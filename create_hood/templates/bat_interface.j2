@@ -9,7 +9,7 @@ iface bat-{{ item.hoodname }} inet static
     post-up batctl -m $IFACE gw_mode server 64000/64000
 
 iface bat-{{ item.hoodname }} inet6 static
-    address GW-IPV6/{{ item.ipv6.fff.net }}
+    address {{ item.ipv6.fff.ip }}/{{ item.ipv6.fff.net }}
 
     post-up ip -6 addr add fe80::1/64 dev $IFACE nodad
     post-up ip -6 addr add {{ item.ipv6.int.ip }}/64 dev $IFACE

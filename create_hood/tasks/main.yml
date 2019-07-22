@@ -100,7 +100,14 @@
 - name: Create bat interface
   template:
     src: "bat_interface.j2"
-    dest: "/etc/network/interfaces.d/bat-{{ item.hoodname }}.conf"
+    dest: "/etc/network/interfaces.d/bat-{{ item.hoodname }}.cfg"
+  with_items: "{{ hood_data }}"
+  when: hood_data is defined
+
+- name: Create fff interface
+  template:
+    src: "fff_interface.j2"
+    dest: "/etc/network/interfaces.d/fff{{ item.hoodname }}.cfg"
   with_items: "{{ hood_data }}"
   when: hood_data is defined
 
