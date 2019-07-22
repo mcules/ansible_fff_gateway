@@ -37,4 +37,6 @@ Add following to you server config file:
         apache2:
           port: 200X
         keyserver: "https://keyserver.freifunk-franken.de/v2/index.php?hoodid=***HOOD_ID***"
+      - hoodname: "YOUR_HOOD2_NAME"
+        ipv4: ..............
 ```
