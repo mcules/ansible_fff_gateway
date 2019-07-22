@@ -7,10 +7,13 @@ protocol device {
 protocol kernel {
     scan time 15;
     kernel table 20;
-    export all; # Actually insert routes into the kernel routing table
+#    export all; # Actually insert routes into the kernel routing table
+    export filter {
+        if proto = "static_local" then reject; accept;
+    };
 }
 
-protocol static {
+protocol static static_local {
     import all;
     {% for route in (bird.routes) %}
     route {{ route }} reject;
