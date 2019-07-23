@@ -7,7 +7,7 @@ Type=simple
 Restart=always
 RestartSec=10
 
-ExecStart=/usr/sbin/dnsmasq -k --conf-dir=/etc/dnsmasq.d,*.conf --interface bat-{{ item.hoodname }} --dhcp-range={{ item.dhcp.start }}, {{ item.dhcp.end }}, {{ item.dhcp.mask }}, 20m --pid-file=/var/run/dhcp-bat-{{ item.hoodname }}.pid --dhcp-leasefile==/var/lib/misc/bat-{{ item.hoodname }}.leases
+ExecStart=/usr/sbin/dnsmasq -k --conf-dir=/etc/dnsmasq.d,*.conf --interface bat-{{ item.hoodname }} --dhcp-range={{ item.dhcp.start }},{{ item.dhcp.end }},{{ item.dhcp.mask }},20m --pid-file=/var/run/dhcp-bat-{{ item.hoodname }}.pid --dhcp-leasefile=/var/lib/misc/bat-{{ item.hoodname }}.leases
 
 [Install]
 WantedBy=multi-user.target

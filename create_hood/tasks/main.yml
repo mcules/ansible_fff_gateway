@@ -7,7 +7,6 @@
     dest: "/etc/systemd/system/alfred-fff-{{ item.hoodname }}.service"
   with_items: "{{ hood_data }}"
   when: hood_data is defined
-#  notify: restart alfred
 
 ### dnsmasq ###
 - name: Create dnsmasq Service
@@ -16,7 +15,6 @@
     dest: "/etc/systemd/system/dnsmasq-fff-{{ item.hoodname }}.service"
   with_items: "{{ hood_data }}"
   when: hood_data is defined
-#  notify: restart dnsmasq
 
 ### fastd ###
 - name: Create fastd Service
@@ -65,7 +63,6 @@
     dest: "/etc/fastd/fff-{{ item.hoodname }}/fastd.conf"
   with_items: "{{ hood_data }}"
   when: hood_data is defined
-#  notify: restart fastd
 
 ### Apache2 ###
 - name: Create apache vHost
@@ -87,7 +84,6 @@
     dest: "/var/www/gw-{{ item.hoodname }}"
     state: directory
   with_items: "{{ hood_data }}"
-# notify: reload apache2
 
 - name: Create www gateway file
   template:
@@ -104,10 +100,10 @@
   with_items: "{{ hood_data }}"
   when: hood_data is defined
 
-- name: Create fff interface
+- name: Create fastd interface
   template:
     src: "fff_interface.j2"
-    dest: "/etc/network/interfaces.d/fff{{ item.hoodname }}.cfg"
+    dest: "/etc/network/interfaces.d/fff-{{ item.hoodname }}.cfg"
   with_items: "{{ hood_data }}"
   when: hood_data is defined
 
@@ -157,4 +153,35 @@
     name: "Get keyxchangev2data for Hood {{ item.hoodname }}"
     minute: "*/5"
     job: 'wget "{{ item.keyserver }}" -O /var/www/gw-{{ item.hoodname }}/keyxchangev2data 2>&1'
+  with_items: "{{ hood_data }}"
+
+- name: just force systemd to reread configs (2.4 and above)
+  systemd:
+    daemon_reload: yes
+
+- name: Start alfred systemd services
+  systemd:
+    name: "alfred-fff-{{ item.hoodname }}"
+    enabled: yes
+    masked: no
+    state: restarted
+    daemon_reload: yes
+  with_items: "{{ hood_data }}"
+
+- name: Start dnsmasq systemd services
+  systemd:
+    name: "dnsmasq-fff-{{ item.hoodname }}"
+    enabled: yes
+    masked: no
+    state: restarted
+    daemon_reload: yes
+  with_items: "{{ hood_data }}"
+
+- name: Start fastd systemd services
+  systemd:
+    name: "fastd-fff-{{ item.hoodname }}"
+    enabled: yes
+    masked: no
+    state: restarted
+    daemon_reload: yes
   with_items: "{{ hood_data }}"

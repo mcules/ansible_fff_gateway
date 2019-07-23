@@ -1,4 +1,6 @@
-iface fff{{ item.hoodname }} inet manual
+auto fff-{{ item.hoodname }}
+
+iface fff-{{ item.hoodname }} inet manual
     post-up batctl -m bat-{{ item.hoodname }} if add $IFACE
     post-up ifconfig $IFACE up
     post-up ifup bat-{{ item.hoodname }}
