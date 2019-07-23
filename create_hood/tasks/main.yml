@@ -120,8 +120,14 @@
   with_items: "{{ hood_data }}"
   when: hood_data is defined
 
-- name: "Append radvd.conf with content of temporary files"
-  shell: cat fff-* >> /etc/radvd.conf2
+- name: Clear radvd.conf
+  copy:
+    dest=/etc/radvd.conf
+    content=""
+    force=yes
+
+- name: Append radvd.conf with content of temporary files
+  shell: cat fff-* >> /etc/radvd.conf
   args:
     chdir: "/etc/radvd.tmp/"
 
@@ -159,29 +165,33 @@
   systemd:
     daemon_reload: yes
 
-- name: Start alfred systemd services
+- name: (Re)start alfred systemd services
   systemd:
     name: "alfred-fff-{{ item.hoodname }}"
     enabled: yes
     masked: no
     state: restarted
-    daemon_reload: yes
   with_items: "{{ hood_data }}"
 
-- name: Start dnsmasq systemd services
+- name: (Re)start dnsmasq systemd services
   systemd:
     name: "dnsmasq-fff-{{ item.hoodname }}"
     enabled: yes
     masked: no
     state: restarted
-    daemon_reload: yes
   with_items: "{{ hood_data }}"
 
-- name: Start fastd systemd services
+- name: (Re)start fastd systemd services
   systemd:
     name: "fastd-fff-{{ item.hoodname }}"
     enabled: yes
     masked: no
     state: restarted
-    daemon_reload: yes
   with_items: "{{ hood_data }}"
+
+- name: (Re)start radvd systemd service
+  systemd:
+    name: radvd
+    enabled: yes
+    masked: no
+    state: restarted
