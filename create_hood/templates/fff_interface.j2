@@ -1,8 +1,8 @@
 auto fff-{{ item.hoodname }}
 
 iface fff-{{ item.hoodname }} inet manual
-    post-up batctl -m bat-{{ item.hoodname }} if add $IFACE
-    post-up ifconfig $IFACE up
-    post-up ifup bat-{{ item.hoodname }}
-    post-down ifdown bat-{{ item.hoodname }}
-    post-down ifconfig $IFACE down
+    pre-up batctl -m bat-{{ item.hoodname }} if add $IFACE
+    post-down batctl -m bat-{{ item.hoodname }} if del $IFACE
+
+    up ip link set up $IFACE
+    down ip link set down $IFACE
