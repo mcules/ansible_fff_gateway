@@ -1,0 +1,37 @@
+{% raw %}
+{% if item.bootproto == 'static' %}
+  {% if item.allow-hotplug %}
+    allow-hotplug {{ item.device }}
+  {% else %}
+    auto {{ item.device }}
+  {% endif %}
+iface {{ item.device }} inet static
+{% if item.ipv4 is defined %}
+address {{ item.ipv4 }}
+{% endif %}
+{% if item.netmask is defined %}
+netmask {{ item.ipv4_subnet }}
+{% endif %}
+{% if item.ipv4_gw is defined %}
+gateway {{ item.ipv4_gw }}
+{% else %}
+{% if item.ipv4_gw is defined %}
+up ip route add default via {{ item.ipv4_gw }} dev {{ item.device }} table {{ item.device }}
+up ip rule add from {{ item.address }} table {{ item.device }}
+down ip route del default table {{ item.device }}
+{% endif %}
+{% endif %}
+{% endif %}
+
+{% if item.bootproto == 'dhcp' %}
+auto {{ item.device }}
+iface {{ item.device }} inet dhcp
+{% endif %}
+
+{% if item.bootproto == 'manual' %}
+auto {{ item.device }}
+iface {{ item.device }} inet manual
+pre-up ip link set {{ item.device }} up
+post-down ip link set {{ item.device }} down
+{% endif %}
+{% endraw %}

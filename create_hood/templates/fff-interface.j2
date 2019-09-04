@@ -1,5 +1,3 @@
-auto fff-{{ item.hoodname }}
-
 iface fff-{{ item.hoodname }} inet manual
     pre-up batctl -m bat-{{ item.hoodname }} if add $IFACE
     post-down batctl -m bat-{{ item.hoodname }} if del $IFACE
